@@ -1,0 +1,433 @@
+<!-- Bread crumb is created dynamically -->
+<div class="row" data-ng-controller="ForumPageCtrl" data-ng-init="loadMyQuestion(UserInfo, 0, 10);loadQuestionRateData(UserInfo,0,10);loadResolvedQuestion(0,10);loadReadyToResolved(0,10);ForumPageData()">
+	<ul id="myTab1" class="nav nav-tabs bordered">
+		<li class="active">
+			<a href="#s1" data-toggle="tab"><i class="fa fa-fw fa-lg fa-bookmark"></i>&nbsp;主題區</a>
+		</li>
+		<li data-ng-if="UserInfo.U_Role == 'User'">
+			<a href="#s2" data-toggle="tab"><i class="fa fa-fw fa-lg fa-question-circle"></i>&nbsp;我的問題 <span class="badge bg-color-blue txt-color-white">{{numFoundMQ}}</span></a>
+		</li>
+		<li data-ng-if="UserInfo.U_Role == 'User'">
+			<a href="#s3" data-toggle="tab"><i class="fa fa-fw fa-lg fa-history"></i>&nbsp;待評分區 <span class="badge bg-color-blue txt-color-white">{{numFoundQR}}</span></a>
+		</li>
+		<li data-ng-if="UserInfo.U_Role == 'Admin'">
+			<a href="#s4" data-toggle="tab"><i class="fa fa-fw fa-lg fa-exclamation-circle"></i>&nbsp;已關閉區 <span class="badge bg-color-blue txt-color-white">{{numFoundRQ}}</span></a>
+		</li>
+		<li data-ng-if="UserInfo.U_Role == 'Admin'">
+			<a href="#s5" data-toggle="tab"><i class="fa fa-fw fa-lg fa-history"></i>&nbsp;待解決區 <span class="badge bg-color-blue txt-color-white">{{numFoundRTR}}</span></a>
+		</li>
+	</ul>
+	<div id="myTabContent1" class="tab-content padding-10 well">
+		<div class="tab-pane fade in active" id="s1">
+
+			<!-- row -->
+			<div class="row">
+
+				<div class="col-sm-12">
+
+					<table class="table table-striped table-forum">
+						<thead class="bg-color-greenDark">
+							<tr style="height: 43px;">
+								<th colspan="2"><span class="font-md label bg-color-greenDark">業務類</span> </th>
+								<th class="text-center hidden-xs hidden-sm" style="width: 100px;"><span class="label bg-color-greenDark">發佈數</span></th>
+								<th class="hidden-xs hidden-sm" style="width: 200px;"><span class="label bg-color-greenDark">最後發表文章</span></th>
+								<th class="text-center hidden-xs hidden-sm" style="width: 100px;"><span class="label bg-color-greenDark">最後發表回覆數</span></th>
+								<th class="hidden-xs hidden-sm" style="width: 200px;"><span class="label bg-color-greenDark">最後發表時間</span></th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- TR -->
+							<tr data-ng-repeat="data in FP_business">
+								<td class="text-center" style="width: 40px;"><img ng-src="{{data.imgPath}}"></td>
+								<td>
+									<h4>
+										<a href="javascript:void(0);" 
+										   data-ng-click='next_ForumTopic("業務類", "greenDark", data.Introduction)'>
+											{{data.Introduction}}
+										</a>
+										<!-- <small>{{data.subTitle}}</small> -->
+									</h4>
+								</td>
+								<td class="text-center hidden-xs hidden-sm">
+									{{data.Topics}}
+								</td>
+								<td class="hidden-xs hidden-sm">
+									<a href="javascript:void(0);"
+									   data-ng-click="enter_ForumPost({BgClass:''}, data.data)">{{data.LastPostTopic}}</a>
+								</td>
+								<td class="text-center hidden-xs hidden-sm">
+									{{data.Posts}}
+								</td>
+								<td class="hidden-xs hidden-sm">by 
+									<code>{{data.LastPostName}}</code>
+									<br>
+									<small><i>{{data.LastPostTime}}</i></small>
+								</td>
+							</tr>
+							<!-- end TR -->
+							
+						</tbody>
+					</table>
+
+					<table class="table table-striped table-forum">
+						<thead class="bg-color-redLight">
+							<tr style="height: 43px;">
+								<th colspan="2"><span class="font-md label bg-color-redLight">系統類</span> </th>
+								<th class="text-center hidden-xs hidden-sm" style="width: 100px;"><span class="label bg-color-redLight">發佈數</span></th>
+								<th class="hidden-xs hidden-sm" style="width: 200px;"><span class="label bg-color-redLight">最後發表文章</span></th>
+								<th class="text-center hidden-xs hidden-sm" style="width: 100px;"><span class="label bg-color-redLight">最後發表回覆數</span></th>
+								<th class="hidden-xs hidden-sm" style="width: 200px;"><span class="label bg-color-redLight">最後發表時間</span></th>
+							</tr>
+						</thead>
+						<tbody>
+							
+							<!-- TR -->
+							<tr data-ng-repeat="data in FP_system">
+								<td class="text-center" style="width: 40px;"><img ng-src="{{data.imgPath}}"></td>
+								<td>
+									<h4>
+										<a href="javascript:void(0);" 
+										   data-ng-click='next_ForumTopic("系統類", "redLight", data.Introduction)'>
+											{{data.Introduction}}
+										</a>
+										<!-- <small>{{data.subTitle}}</small> -->
+									</h4>
+								</td>
+								<td class="text-center hidden-xs hidden-sm">
+									{{data.Topics}}
+								</td>
+								<td class="hidden-xs hidden-sm">
+									<a href="javascript:void(0);"
+									   data-ng-click="enter_ForumPost({BgClass:''}, data.data)">{{data.LastPostTopic}}</a>
+								</td>
+								<td class="text-center hidden-xs hidden-sm">
+									{{data.Posts}}
+								</td>
+								<td class="hidden-xs hidden-sm">by 
+									<code>{{data.LastPostName}}</code>
+									<br>
+									<small><i>{{data.LastPostTime}}</i></small>
+								</td>
+							</tr>
+							<!-- end TR -->
+							
+						</tbody>
+					</table>
+
+
+					<table class="table table-striped table-forum">
+						<thead class="bg-color-orangeDark">
+							<tr style="height: 43px;">
+								<th colspan="2"><span class="font-md label bg-color-orangeDark">其它類</span> </th>
+								<th class="text-center hidden-xs hidden-sm" style="width: 100px;"><span class="label bg-color-orangeDark">發佈數</span></th>
+								<th class="hidden-xs hidden-sm" style="width: 200px;"><span class="label bg-color-orangeDark">最後發表時間</span></th>
+								<th class="text-center hidden-xs hidden-sm" style="width: 100px;"><span class="label bg-color-orangeDark">最後發表回覆數</span></th>
+								<th class="hidden-xs hidden-sm" style="width: 200px;"><span class="label bg-color-orangeDark">最後發表文章</span></th>
+							</tr>
+						</thead>
+						<tbody>
+							
+							<!-- TR -->
+							<tr data-ng-repeat="data in FP_other">
+								<td class="text-center" style="width: 40px;"><img ng-src="{{data.imgPath}}"></td>
+								<td>
+									<h4>
+										<a href="javascript:void(0);" 
+										   data-ng-click='next_ForumTopic("其它類", "orangeDark", data.Introduction)'>
+											{{data.Introduction}}
+										</a>
+										<!-- <small>{{data.subTitle}}</small> -->
+									</h4>
+								</td>
+								<td class="text-center hidden-xs hidden-sm">
+									{{data.Topics}}
+								</td>
+								<td class="hidden-xs hidden-sm">
+									<a href="javascript:void(0);"
+									   data-ng-click="enter_ForumPost({BgClass:''}, data.data)">{{data.LastPostTopic}}</a>
+								</td>
+								<td class="text-center hidden-xs hidden-sm">
+									{{data.Posts}}
+								</td>
+								<td class="hidden-xs hidden-sm">by 
+									<code>{{data.LastPostName}}</code>
+									<br>
+									<small><i>{{data.LastPostTime}}</i></small>
+								</td>
+							</tr>
+							<!-- end TR -->
+							
+						</tbody>
+					</table>
+
+				</div>
+
+			</div>
+
+			<!-- end row -->
+		</div>
+
+		<div class="tab-pane fade" 
+		     id="s2">
+		     <div style="min-height=653px">
+				<table class="table table-striped table-forum">
+					<thead class="bg-color-blueDark">
+						<tr style="height: 43px;">
+							<th colspan="2">
+								<span class="font-md label bg-color-blueDark">
+									我的問題
+								</span>
+							</th>
+							<th class="hidden-xs hidden-sm" style="width: 200px;">
+								<span class="label bg-color-blueDark">發問者</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- TR -->
+						<tr data-ng-repeat="data in myQuestionData">
+							<td colspan="2">
+								<h4>
+									<i class="fa fa-key text-muted" data-ng-if="data.F_State == false"></i>
+									<i class="fa fa-key text-warning" data-ng-if="data.F_State == true"></i>
+									<a href="javascript:void(0);"
+									   data-ng-click='enter_ForumPost(forumTopicRelation, data)'>
+									{{data.F_Topic}}
+								</a>
+								</h4>
+							</td>
+							<td class="hidden-xs hidden-sm">by 
+								<a href="javascript:void(0);">{{data.F_Author}}</a>
+								<br>
+								<small><i>{{data.F_PublishDT}}</i></small>
+							</td>
+						</tr>
+						<!-- end TR -->							
+						
+					</tbody>
+				</table>
+			</div>
+
+			<div class="text-center">
+	            <pagination style="margin: 5px 0 5px 0;"
+							total-items="numFoundMQ" 
+							ng-model="MQcurrentPage" 
+							data-ng-click="SelectPage(UserInfo, '我的問題', MQcurrentPage)"
+							max-size="maxSize" 
+							class="pagination-sm" 
+							boundary-links="true"
+							rotate="false" 
+							num-pages="numPages"></pagination>
+	        </div>
+		</div>
+
+		<div class="tab-pane fade" 
+		     id="s3">
+		     <div style="min-height=653px">
+				<table class="table table-striped table-forum">
+					<thead class="bg-color-pink">
+						<tr style="height: 43px;">
+							<th colspan="2">
+								<span class="font-md label bg-color-pink">
+									待評分區
+								</span>
+							</th>
+							<th class="hidden-xs hidden-sm" style="width: 200px;">
+								<span class="label bg-color-pink">解答者</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- TR -->
+						<tr data-ng-repeat="data in questionRateData track by data.F_ID">
+							<td colspan="2">
+								<h4><a href="javascript:void(0);"
+									   data-ng-click='enter_ForumPost(forumTopicRelation, data)'>
+									{{data.F_Topic}}
+								</a>
+								</h4>
+							</td>
+							<td class="hidden-xs hidden-sm">by 
+								<a href="javascript:void(0);">{{data.F_Closer}}</a>
+								<br>
+								<small><i>{{data.F_CloseDT}}</i></small>
+							</td>
+						</tr>
+						<!-- end TR -->							
+						
+					</tbody>
+				</table>
+			</div>
+
+			<div class="text-center">
+	            <pagination style="margin: 5px 0 5px 0;"
+							total-items="numFoundQR" 
+							ng-model="QRcurrentPage" 
+							data-ng-click="SelectPage(UserInfo, '待評分區', QRcurrentPage)"
+							max-size="maxSize" 
+							class="pagination-sm" 
+							boundary-links="true"
+							rotate="false" 
+							num-pages="numPages"></pagination>
+	        </div>
+		</div>
+		<div class="tab-pane fade" 
+		     id="s4">
+		     <div style="min-height=653px">
+			     <table class="table table-striped table-forum">
+					<thead class="bg-color-primary">
+						<tr style="height: 43px;">
+							<th colspan="2">
+								<span class="font-md label bg-color-primary">
+									已關閉區
+								</span>
+							</th>
+							<th class="hidden-xs hidden-sm" style="width: 200px;">
+								<span class="label bg-color-primary">發問者</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- TR -->
+						<tr data-ng-repeat="data in resolvedQuestion track by data.F_ID">
+							<td colspan="2">
+								<h4>
+									<i class="fa fa-key text-muted" data-ng-if="data.F_State == false"></i>
+									<i class="fa fa-key text-warning" data-ng-if="data.F_State == true"></i>
+									<a href="javascript:void(0);"
+									   data-ng-click='enter_ForumPost(forumTopicRelation, data)'>
+									{{data.F_Topic}}
+									</a>
+								</h4>
+							</td>
+							<td class="hidden-xs hidden-sm">by 
+								<a href="javascript:void(0);">{{data.F_UserName}}</a>
+								<br>
+								<small><i>{{data.F_PublishDT}}</i></small>
+							</td>
+						</tr>
+						<!-- end TR -->							
+						
+					</tbody>
+				</table>
+			</div>
+
+			<div class="text-center">
+	            <pagination style="margin: 5px 0 5px 0;"
+							total-items="numFoundRQ" 
+							ng-model="RQcurrentPage" 
+							data-ng-click="SelectPage(UserInfo, '已解決區', RQcurrentPage)"
+							max-size="maxSize" 
+							class="pagination-sm" 
+							boundary-links="true"
+							rotate="false" 
+							num-pages="numPages"></pagination>
+	        </div>
+		</div>
+		<div class="tab-pane fade" 
+		     id="s5">
+		     <div style="min-height=653px">
+			     <table class="table table-striped table-forum">
+					<thead class="bg-color-pink">
+						<tr style="height: 43px;">
+							<th colspan="2">
+								<span class="font-md label bg-color-pink">
+									待解決區
+								</span>
+							</th>
+							<th class="hidden-xs hidden-sm" style="width: 200px;">
+								<span class="label bg-color-pink">發問者</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- {{readyToResolved}} -->
+						<!-- TR -->
+						<tr data-ng-repeat="data in readyToResolved track by data.F_ID">
+							<td colspan="2">
+								<h4>
+									<i class="fa fa-key text-muted" data-ng-if="data.F_State == false"></i>
+									<i class="fa fa-key text-warning" data-ng-if="data.F_State == true"></i>
+									<a href="javascript:void(0);"
+									   data-ng-click='enter_ForumPost(forumTopicRelation, data)'>
+									{{data.F_Topic}}
+									</a>
+								</h4>
+							</td>
+							<td class="hidden-xs hidden-sm">by 
+								<a href="javascript:void(0);">{{data.F_UserName}}</a>
+								<br>
+								<small><i>{{data.F_PublishDT}}</i></small>
+							</td>
+						</tr>
+						<!-- end TR -->							
+						
+					</tbody>
+				</table>
+			</div>
+
+			<div class="text-center">
+	            <pagination style="margin: 5px 0 5px 0;"
+							total-items="numFoundRTR" 
+							ng-model="RTRcurrentPage" 
+							data-ng-click="SelectPage(UserInfo, '待解決區', RTRcurrentPage)"
+							max-size="maxSize" 
+							class="pagination-sm" 
+							boundary-links="true"
+							rotate="false" 
+							num-pages="numPages"></pagination>
+	        </div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	/* DO NOT REMOVE : GLOBAL FUNCTIONS!
+	 *
+	 * pageSetUp(); WILL CALL THE FOLLOWING FUNCTIONS
+	 *
+	 * // activate tooltips
+	 * $("[rel=tooltip]").tooltip();
+	 *
+	 * // activate popovers
+	 * $("[rel=popover]").popover();
+	 *
+	 * // activate popovers with hover states
+	 * $("[rel=popover-hover]").popover({ trigger: "hover" });
+	 *
+	 * // activate inline charts
+	 * runAllCharts();
+	 *
+	 * // setup widgets
+	 * setup_widgets_desktop();
+	 *
+	 * // run form elements
+	 * runAllForms();
+	 *
+	 ********************************
+	 *
+	 * pageSetUp() is needed whenever you load a page.
+	 * It initializes and checks for all basic elements of the page
+	 * and makes rendering easier.
+	 *
+	 */
+
+	pageSetUp();
+
+	/*
+	 * ALL PAGE RELATED SCRIPTS CAN GO BELOW HERE
+	 * eg alert("my home function");
+	 */
+
+	// pagefunction
+	
+	var pagefunction = function() {
+		
+	};
+	
+	// end pagefunction
+	
+	// run pagefunction on load
+	pagefunction();
+
+</script>

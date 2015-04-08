@@ -1,0 +1,339 @@
+<div class="row">
+	<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+		<h1 class="page-title txt-color-magenta">
+			<i class="fa fa-question-circle fa-fw "></i> 
+				查詢
+		</h1>
+	</div>
+</div>
+
+<!-- widget grid -->
+<section id="widget-grid" class="">
+
+	<!-- row -->
+	<div class="row" data-ng-controller="FAQCtrl">
+
+		<!-- NEW WIDGET START -->
+		<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+			<!-- Widget ID (each widget will need unique ID)-->
+			<div class="jarviswidget jarviswidget-color-magenta" data-widget-editbutton="false" data-widget-colorbutton="false" data-widget-deletebutton="false" data-widget-fullscreenbutton="false">
+				<!-- widget options:
+				usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+				data-widget-colorbutton="false"
+				data-widget-editbutton="false"
+				data-widget-togglebutton="false"
+				data-widget-deletebutton="false"
+				data-widget-fullscreenbutton="false"
+				data-widget-custombutton="false"
+				data-widget-collapsed="true"
+				data-widget-sortable="false"
+
+				-->
+				<header>
+					<span class="widget-icon"> <i class="fa fa-table"></i> </span>
+					<h2>查詢條件 </h2>
+
+				</header>
+
+				<!-- widget div-->
+				<div>
+
+					<!-- widget edit box -->
+					<div class="jarviswidget-editbox">
+						<!-- This area used as dropdown edit box -->
+
+					</div>
+					<!-- end widget edit box -->
+
+					<!-- widget content -->
+					<div class="widget-body">
+						<!-- smart-form -->
+						<form class="form-horizontal" id="checkout-form" novalidate="novalidate" data-ng-controller="SettingCtrl" >
+							<fieldset>
+								<div class="form-group">
+									<label class="col-md-2 control-label">查詢類型</label>
+									<div class="col-md-4 ng-class:hasError[0]">
+										<select class="form-control" name="TypeSelect" ng-model="TypeSelect" ng-options="data.Type for data in searchList">
+											<option value="">-- 請選擇類別 --</option>
+										</select>
+									</div>
+									<div class="col-md-4 ng-class:hasError[1]">
+										<select class="form-control" name="Classification" ng-model="Classification">
+											<option value="">-- 請選擇分類 --</option>
+											<option ng-repeat="Classification in TypeSelect.Classification">{{Classification}}</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-2 control-label">查詢日期</label>
+									<div class="col-md-4">
+										<div class="input-group ng-class:hasError[2]">
+											<input class="form-control" 
+												   type="text" 
+												   name="startdate" 
+												   id="startdate" 
+												   placeholder="從"
+												   data-ng-model="FromDate">
+											<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="input-group ng-class:hasError[3]">
+											<input class="form-control" 
+												   type="text" 
+												   name="finishdate" 
+												   id="finishdate" 
+												   placeholder="到"
+												   data-ng-model="ToDate">
+											<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group" data-ng-init="loadOrganizationData()">
+									<label class="col-md-2 control-label">提報單位</label>
+									<div class="col-md-8">
+										<select class="form-control" 
+											    ng-model="OrganizationSelect" 
+											    ng-options="data for data in mergeOUData"
+											    ng-disabled="DisableForOrganization(Classification)">
+											<option value="">-- 請選擇單位 --</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-2 control-label">發佈者</label>
+									<div class="col-md-8 ng-class:hasError[4]">
+										<input class="form-control" 
+											   placeholder="輸入發佈者" 
+											   type="text"
+											   name="Poster"
+											   data-ng-model="Poster">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-2 control-label">處理狀態</label>
+									<div class="col-md-8 ng-class:hasError[5]">
+										<select class="form-control" id="select-1" data-ng-model="Status" ng-disabled="DisableForStatus(Classification)">
+											<option value="">-- 請選擇 --</option>
+											<option ng-repeat="status in processingStatus">{{status}}</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-2 control-label">問題關鍵字</label>
+									<div class="col-md-8 ng-class:hasError[6]">
+										<input class="form-control" 
+											   placeholder="輸入關鍵字" 
+											   type="text"
+											   data-ng-model="Keyword">
+									</div>
+								</div>
+								<div class="form-group" data-ng-show="showMiss">
+									<div class="col-md-2">
+									</div>
+									<div class="col-md-8">
+										<div class="alert adjusted alert-danger fade in">
+											<i class="fa-fw fa-lg fa fa-exclamation"></i>
+											尚有資料填入不完整
+										</div>
+									</div>
+								</div>
+							</fieldset>
+							<div class="form-actions">
+								<div class="row">
+									<div class="col-md-12">
+										<!-- <button class="btn btn-warning" type="submit">
+											清空條件
+										</button> -->
+										<button class="btn btn-primary" 
+												type="submit"
+												data-ng-click="Search(TypeSelect,Classification,FromDate,ToDate,OrganizationSelect,Poster,Status,Keyword)">
+											<i class="fa fa-search"></i>
+											查詢
+										</button>
+									</div>
+								</div>
+							</div>
+						</form>
+
+					</div>
+					<!-- end widget content -->
+
+				</div>
+				<!-- end widget div -->
+
+			</div>
+			<!-- end widget -->
+
+		</article>
+		<!-- WIDGET END -->
+
+		<!-- {{searchCondition}} -->
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="min-height: 473px;">
+			<p>有 {{numFoundSC}} 項結果 (搜尋時間：{{costTime}} 秒) </p>
+			<div data-ng-show="searchCondition.length != 0">
+				<div class="table-responsive" style="min-height: 385px;" data-ng-controller="MasterPageCtrl">
+
+					<table id="resultTable" class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th data-ng-repeat="data in searchField"><span ng-bind="data"></span></th>
+							</tr>
+						</thead>
+						<tbody>
+
+							<tr data-ng-repeat="data in searchCondition"
+								data-ng-show="tableClassification == '公佈欄訊息'">
+								<td>{{data['公佈者']}}</td>
+								<td>
+									<a href="javascript:void(0);"
+									   data-ng-click="openNewsOnBoard(data.data)">
+										{{data['標題']}}
+									</a>
+								</td>
+								<td>{{data['發佈日期']}}</td>
+								<td style="width: 53px;" data-ng-if="data['置頂訊息'] == true"><span class="label bg-color-primary">是</span></td>
+								<td style="width: 53px;" data-ng-if="data['置頂訊息'] == false"><span class="label bg-color-red">否</span></td>
+							</tr>
+
+							<tr data-ng-repeat="data in searchCondition"
+								data-ng-show="tableClassification != '公佈欄訊息'">
+								<td>{{data['發佈者']}}</td>
+								<td>{{data['類型']}}</td>
+								<td>{{data['主題']}}</td>
+								<td>
+									<a href="javascript:void(0);"
+									   data-ng-click="enter_ForumPost({BgClass:''}, data.data)">
+										{{data['標題']}}
+									</a>
+								</td>
+								<td>{{data['日期']}}</td>
+								<td data-ng-if="data['分數'] == -1">未評分</td>
+								<td data-ng-if="data['分數'] != -1">
+									<div class="rating" data-ng-init="star = countStar(data['分數']);unstar = countStar(10-data['分數'])">
+	                                    <span data-ng-repeat="data in star">
+	                                        <i class="fa fa-star text-warning"></i>
+	                                    </span>
+	                                    <span data-ng-repeat="data in unstar">
+	                                        <i class="fa fa-star text-muted"></i>
+	                                    </span>
+	                                </div>
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>
+				<div style="width:400px; margin:0 auto">
+					<pagination style="margin: 5px 0 5px 0;"
+									total-items="numFoundSC" 
+									ng-model="currentPage" 
+									data-ng-click="SelectPage(currentPage, '查詢')"
+									max-size="maxSize" 
+									class="pagination-sm" 
+									boundary-links="true"
+									rotate="false" 
+									num-pages="numPages"></pagination>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- end row -->
+
+</section>
+<!-- end widget grid -->
+
+<script type="text/javascript">
+	
+	/* DO NOT REMOVE : GLOBAL FUNCTIONS!
+	 *
+	 * pageSetUp(); WILL CALL THE FOLLOWING FUNCTIONS
+	 * 
+	 * // activate tooltips
+	 * $("[rel=tooltip]").tooltip();
+	 * 
+	 * // activate popovers
+	 * $("[rel=popover]").popover();
+	 * 
+	 * // activate popovers with hover states
+	 * $("[rel=popover-hover]").popover({ trigger: "hover" });
+	 * 
+	 * // activate inline charts
+	 * runAllCharts();
+	 * 
+	 * // setup widgets
+	 * setup_widgets_desktop();
+	 * 
+	 * //setup nav height (dynamic)
+	 * nav_page_height();
+	 * 
+	 * // run form elements
+	 * runAllForms();
+	 * 
+	 ********************************
+	 * 
+	 * pageSetUp() is needed whenever you load a page. 
+	 * It initializes and checks for all basic elements of the page 
+	 * and makes rendering easier.
+	 * 
+	 */
+	
+	pageSetUp();
+
+	/*
+	 * ALL PAGE RELATED SCRIPTS CAN GO BELOW HERE
+	 * eg alert("my home function");
+	 */
+
+	 var pagefunction = function() {
+
+		// Date Range Picker
+		$("#finishdate").datepicker({
+		    defaultDate: "+1w",
+		    changeMonth: true,
+		    numberOfMonths: 3,
+		    prevText: '<i class="fa fa-chevron-left"></i>',
+		    nextText: '<i class="fa fa-chevron-right"></i>',
+		    onClose: function (selectedDate) {
+		        $("#startdate").datepicker("option", "maxDate", selectedDate);
+		    }
+
+		});
+		$("#startdate").datepicker({
+		    defaultDate: "+1w",
+		    changeMonth: true,
+		    numberOfMonths: 3,
+		    prevText: '<i class="fa fa-chevron-left"></i>',
+		    nextText: '<i class="fa fa-chevron-right"></i>',
+		    onClose: function (selectedDate) {
+		        $("#finishdate").datepicker("option", "minDate", selectedDate);
+		    }
+		});
+	};
+	
+	// end pagefunction
+	
+	// load bootstrap-progress bar script and run pagefunction
+	pagefunction();
+
+</script>
+
+<script type="text/ng-template" id="openNews.html">
+    <div class="modal-header">
+		<h3 class="modal-title">
+			<strong>{{openNewsData.B_Topic}}</strong>
+		</h3>
+    </div>
+    <div class="modal-body">
+    	<p class="text-muted">{{openNewsData.B_PublishDT}}</p>
+        <post-content content="openNewsData.B_Content"></post-content>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="cancel()">OK</button>
+    </div>
+</script>

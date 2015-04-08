@@ -1,0 +1,211 @@
+<div class="row">
+	<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+		<h1 class="page-title txt-color-blueDark">
+			<i class="fa fa-gear fa-fw "></i> 
+				設定
+		</h1>
+	</div>
+</div>
+
+<div class="row" data-ng-controller="SettingCtrl">
+
+	<div class="col-sm-12">
+		<!-- <div id="myCarousel" class="carousel fade profile-carousel">
+			<div class="air air-top-left padding-10">
+				<h4 class="txt-color-white font-md">{{nowTime}}</h4>
+			</div>
+			<ol class="carousel-indicators">
+				<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+				<li data-target="#myCarousel" data-slide-to="1" class=""></li>
+				<li data-target="#myCarousel" data-slide-to="2" class=""></li>
+			</ol>
+			<div class="carousel-inner">
+				<div class="item active">
+					<img src="img/demo/s1.jpg" alt="">
+				</div>
+				<div class="item">
+					<img src="img/demo/s2.jpg" alt="">
+				</div>
+				<div class="item">
+					<img src="img/demo/m3.jpg" alt="">
+				</div>
+			</div>
+		</div> -->
+	</div>
+
+	<div class="col-sm-12">
+
+		<div class="row" style="margin-top: 10px;">
+
+			<div class="col-sm-2 profile-pic">
+				<img src="img/avatars/adm-big.png" data-ng-if="UserInfo.U_Role == 'Admin'">
+				<img src="img/avatars/male-big.png" data-ng-if="UserInfo.U_Role == 'User'">
+			</div>
+			<div class="col-sm-6">
+				<h1>{{UserInfo.U_Name}} <span class="semi-bold"></span>
+				<br>
+				<small><i class="fa fa-user" style="width:13px"></i>&nbsp;&nbsp;{{UserInfo.U_Role}}</small></h1>
+
+				<ul class="list-unstyled">
+					<li>
+						<p class="text-muted">
+							<i class="fa fa-building" style="width:13px"></i>&nbsp;&nbsp;<span class="txt-color-darken">{{UserInfo.U_Department}}</span>
+						</p>
+					</li>
+					<!-- <li>
+						<p class="text-muted">
+							<i class="fa fa-envelope"></i>&nbsp;&nbsp;<a href="mailto:{{UserInfo.U_Mail}}">{{UserInfo.U_Mail}}</a>
+						</p>
+					</li> -->
+					<li data-ng-if="(UserInfo.U_Role != 'Guest')">
+						<p class="text-muted">
+							<i class="fa fa-key"></i>&nbsp;&nbsp;<span class="txt-color-darken">
+								<a href="javascript:void(0);" 
+								   class="btn bg-color-red txt-color-white"
+								   data-ng-click="openChangePW(UserInfo)">變更密碼</a></span>
+						</p>
+					</li>
+				</ul>
+
+			</div>
+			<div class="col-sm-3">
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+<div data-ng-show="UserInfo.U_Role == 'Admin'">
+	<ul id="myTab1" class="nav nav-tabs bordered">
+		<li class="active">
+			<a href="#s1" data-toggle="tab"><i class="fa fa-fw fa-lg fa-sign-in"></i>&nbsp;帳號列表</a>
+		</li>
+		<li>
+			<a href="#s2" data-toggle="tab"><i class="fa fa-fw fa-lg fa-table"></i>&nbsp;公佈欄列表 </a>
+		</li>
+		<!-- <li>
+			<a href="#s3" data-toggle="tab"><i class="fa fa-fw fa-lg fa-question"></i>&nbsp;所有問題列表 </a>
+		</li>
+		<li>
+			<a href="#s4" data-toggle="tab"><i class="fa fa-fw fa-lg fa-question-circle"></i>&nbsp;FAQ列表 </a>
+		</li> -->
+		<li>
+			<a href="#s5" data-toggle="tab"><i class="fa fa-fw fa-lg fa-building"></i>&nbsp;自訂部門單位 </a>
+		</li>
+	</ul>
+	<div id="myTabContent1" class="tab-content padding-10 well">
+		<div class="tab-pane fade in active" 
+			 id="s1"
+			 data-ng-controller="SettingCtrl"
+			 data-ng-init='loadAccount(0, 10)' 
+			 data-ng-include="'views/SettingChild/帳號列表.html'"></div>
+		<div class="tab-pane fade" 
+			 id="s2"
+			 data-ng-controller="MasterPageCtrl"
+			 data-ng-init='loadBulletinData()'
+			 data-ng-include="'views/SettingChild/公佈欄列表.html'"></div>
+		<!-- <div class="tab-pane fade" 
+			 id="s3"
+			 data-ng-controller="MasterPageCtrl" 
+			 data-ng-init="loadQuestionList(0,10)"
+			 data-ng-include="'views/SettingChild/所有問題列表.html'"></div>
+		<div class="tab-pane fade" 
+			 id="s4"
+			 data-ng-controller="SettingCtrl" 
+			 data-ng-init="loadReadyToFAQ()"
+			 data-ng-include="'views/SettingChild/FAQ列表.html'"></div> -->
+		<div class="tab-pane fade" 
+			 id="s5"
+			 data-ng-controller="SettingCtrl" 
+			 data-ng-init="loadDepartment()"
+			 data-ng-include="'views/SettingChild/自訂部門單位.html'"></div>
+	</div>
+</div>
+
+<script type="text/ng-template" id="ChangePW.html">
+    <div class="modal-header">
+		<div class="modal-title">
+			<p>
+				更改密碼
+			</p>
+		</div>
+    </div>
+    <div class="modal-body">
+    	<form class="form-horizontal">			
+			<fieldset>
+				<div class="form-group">
+					<label class="col-md-2 control-label">舊密碼</label>
+					<div class="col-md-10">
+						<input class="form-control" 
+							   placeholder="輸入舊密碼" 
+							   type="password"
+							   data-ng-model="oldPW">
+					</div>
+				</div>
+		        <div class="form-group">
+					<label class="col-md-2 control-label">新密碼</label>
+					<div class="col-md-10">
+						<input class="form-control" 
+							   placeholder="輸入新密碼" 
+							   type="password"
+							   data-ng-model="newPW">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2 control-label">確認新密碼</label>
+					<div class="col-md-10">
+						<input class="form-control" 
+							   placeholder="再一次輸入新密碼" 
+							   type="password"
+							   data-ng-model="confirmNewPW">
+					</div>
+				</div>
+				<div class="alert adjusted alert-danger fade in"
+					 data-ng-show="showError">
+					<i class="fa-fw fa-lg fa fa-exclamation-triangle"></i>
+					確認新舊密碼輸入是否正確
+				</div>
+			</fieldset>
+		</form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok(oldPW,newPW,confirmNewPW)">確認</button>
+        <button class="btn btn-warning" ng-click="cancel()">取消</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="NewsBoard.html">
+    <div class="modal-header">
+		<div class="modal-title">
+			<input class="form-control"
+			 	   placeholder="輸入你的標題" 
+			 	   type="text"
+			 	   data-ng-model="topic">
+		</div>
+    </div>
+    <div class="modal-body">
+        <editor-form></editor-form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok(topic, UserInfo)">發佈</button>
+        <button class="btn btn-warning" ng-click="cancel()">取消</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="openNews.html">
+    <div class="modal-header">
+		<h3 class="modal-title">
+			<strong>{{openNewsData.B_Topic}}</strong>
+		</h3>
+    </div>
+    <div class="modal-body">
+    	<p class="text-muted">{{openNewsData.B_PublishDT}}</p>
+        <post-content content="openNewsData.B_Content" files="openNewsData.B_Files"></post-content>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="cancel()">OK</button>
+    </div>
+</script>

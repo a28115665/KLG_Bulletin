@@ -1,0 +1,241 @@
+<!-- Bread crumb is created dynamically -->
+
+<!--
+The ID "widget-grid" will start to initialize all widgets below
+You do not need to use widgets if you dont want to. Simply remove
+the <section></section> and you can use wells or panels instead
+-->
+
+<!-- row -->
+<div class="row" data-ng-controller="ForumPostCtrl">
+
+	<div class="col-sm-12">
+        
+		<div class="well">
+			<table class="table table-striped table-forum" data-ng-init="loadForumPostData(forumPostRelation.ID)">
+				<thead class="{{forumPostRelation.BgColor}}">
+                    <tr>
+                        <th colspan="2" class="txt-color-white">
+                        	<img ng-src="{{forumPostRelation.PicSrc}}">
+                        	<a href="#/ForumPage" 
+                        	   class="txt-color-white"> {{forumPostRelation.TypeName}} </a> > 
+                        	<a href="javascript:void(0);"
+                        	   class="txt-color-white"
+                               data-ng-click="next_ForumTopic(forumPostRelation.TypeName, forumPostRelation.BgClass, forumPostRelation.TypeSubName)">{{forumPostRelation.TypeSubName}} </a> > <span>{{forumPostRelation.Topic}}</span>
+                            <button data-ng-if="(UserInfo.U_Role == 'Admin') && (forumPost[0].F_State == false)"
+                                    type="button" 
+                                    class="pull-right btn btn-info"
+                                    data-ng-click="closePost(forumPostRelation, forumPost, UserInfo)">
+                                關閉
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+				<tbody>
+					<!-- Post -->
+					<tr ng-repeat-start="data in forumPost">
+                        <td class="text-center">
+                            <span class="text-left">
+                                #{{$index+1}}
+                            </span>
+                        	<a href="#"><!-- <img alt="" src="img/flags/us.png"> &nbsp;  -->
+                        	<strong>{{data.F_UserName}}</strong></a>
+                        </td>
+                        <td><em>{{data.F_PublishDT}}</em>, {{data.F_Organization}}</td>
+                    </tr>		
+					<tr ng-repeat-end>
+                        <td class="text-center" style="width: 12%;">
+                            <div class="push-bit">
+                                <a href="#">
+                                    <img ng-src="{{data.F_AsFilePath}}" width="50" alt="avatar" class="online">
+                                </a>
+                            </div>
+                            <!-- <small>473 Posts</small> -->
+                        </td>
+                        <td>
+                            <post-content content="data.F_Content"></post-content>
+                        </td>
+                    </tr>				
+					<!-- end Post -->
+
+					<!-- Post -->
+					<tr data-ng-if="(forumPost[0].F_State == false) && (UserInfo.U_Role != 'Guest')">
+                        <td class="text-center">
+                            <span class="text-left">
+                                回覆
+                            </span>
+                        	<a href="#"><!-- <img alt="" src="img/flags/us.png"> --> &nbsp; 
+                                <strong>{{UserInfo.U_Name}}</strong>
+                            </a
+                        </td>
+                        <td><em>Today</em></td>
+                    </tr>		
+					<tr data-ng-if="(forumPost[0].F_State == false) && (UserInfo.U_Role != 'Guest')">
+                        <td class="text-center" style="width: 12%;">
+                            <div class="push-bit">
+                                <a href="#">
+                                    <img data-ng-if="(UserInfo.U_Role == 'Admin')"
+                                         src="img/avatars/adm.png" width="50" alt="avatar" class="online">
+                                    <img data-ng-if="(UserInfo.U_Role == 'User')"
+                                         src="img/avatars/male.png" width="50" alt="avatar" class="online">
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                        	<div>
+                        		<div data-ng-controller="EditorCtrl">
+		                        	<editor-form uploadpath="uploadURL" foldername="folderName"></editor-form>
+		                        </div>
+							
+								<div class="widget-footer smart-form">
+
+									<div class="btn-group pull-left">
+										<div class="form-group">
+											<input id="attachments"
+                                                   type="file" 
+												   name="file" 
+												   class="btn btn-default"
+												   style="margin-top:5px;"
+                                                   ng-file-select="postAttachments($files)"
+												   multiple/>
+										</div>
+									</div>
+
+                                    <div class="btn-group pull-left">
+                                        <div class="form-group" style="min-height: 30px;padding-top: 5px;padding-left: 5px;">
+                                            <strong class="text-info">上傳檔案大小限制</strong><strong class="text-danger"> 25 MB</strong><strong class="text-info">以下</strong>
+                                        </div>
+                                    </div>
+
+									<div class="btn-group">
+										<input type="submit" 
+											   class="btn btn-sm btn-success" 
+											   data-ng-click="SaveEditor(forumPost, attachments, UserInfo)"
+											   value="發文" />
+									</div>
+
+									<div class="btn-group">
+										
+										<button class="btn btn-sm btn-primary" 
+                                                type="button"
+                                                data-ng-click="CloseEditor()">
+											<i class="fa fa-times"></i> 取消
+										</button>	
+													
+									</div>
+
+								</div>
+							</div>
+                            
+                            <div class="bar-holder" ng-show="(selectedFiles != null) && (uploading == true)">
+                                <div class="row sel-file" ng-repeat="f in selectedFiles">
+                                    <p>
+                                        <strong class="text-warning"><i>{{($index + 1)}}</i></strong> 
+                                        <img style="width:16px;height: 16px;" ng-show="dataUrls[$index]" ng-src="{{dataUrls[$index]}}">
+                                        <strong>{{f.name}}</strong> <code>{{fileSize(f.size)}}</code>
+                                        
+                                        <span class="txt-color-green pull-right" ng-show="progress[$index] == 100"><i class="fa fa-lg fa-check"></i></span>
+                                        <strong class="text-success pull-right">{{progress[$index]}}%</strong>
+                                        <a class="btn btn-danger btn-xs pull-right" href="javascript:void(0);" ng-click="abort($index)" ng-show="hasUploader($index) && progress[$index] < 100"><i class="fa fa-remove"></i> 中斷</a>
+                                    </p>
+                                    <div class="progress progress-xs">
+                                        <div class="progress progress-xs" ng-show="progress[$index] >= -1">
+                                            <div class="progress-bar bg-color-blue" role="progressbar" style="width: {{progress[$index]}}%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+						
+                        </td>
+                    </tr>				
+					<!-- end Post -->
+
+                    <!-- Post -->
+                    <tr data-ng-if="(UserInfo.U_Role == 'User') && (forumPost[0].F_State == true) && (forumPost[0].F_Score == -1) && (forumPost[0].F_UserName == UserInfo.U_Name)">
+                        <td class="text-center">
+                            <span class="text-left">
+                                回覆
+                            </span>
+                            <a href="#"><!-- <img alt="" src="img/flags/us.png"> --> &nbsp; 
+                            <strong>{{UserInfo.U_Name}}</strong></a>
+                        </td>
+                        <td><em>Today</em></td>
+                    </tr>       
+                    <tr data-ng-if="(UserInfo.U_Role == 'User') && (forumPost[0].F_State == true) && (forumPost[0].F_Score == -1) && (forumPost[0].F_UserName == UserInfo.U_Name)">
+                        <td class="text-center" style="width: 12%;">
+                            <div class="push-bit">
+                                <a href="#">
+                                    <img src="img/avatars/male.png" width="50" alt="avatar" class="online">
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                            
+                                <div class="widget-footer smart-form">
+                                    <div class="btn-group pull-left">
+                                        <div class="rating" ng-init="star=[10,9,8,7,6,5,4,3,2,1]">
+                                            <input type="radio" 
+                                                   name="quality" 
+                                                   id="quality-{{data}}"
+                                                   ng-repeat-start="data in star">
+                                            <label for="quality-{{data}}"
+                                                   ng-repeat-end
+                                                   data-ng-click="GetScore(data)">
+                                                <i class="fa fa-star"></i>
+                                            </label>
+                                            評分&nbsp;
+                                        </div>
+                                    </div>
+
+                                    <div class="btn-group">
+                                        <input type="submit" 
+                                               class="btn btn-sm btn-warning" 
+                                               data-ng-click="Confirm(forumPost)"
+                                               value="確認" />
+                                        <!-- <button class="btn btn-sm btn-success" 
+                                                type="button"
+                                                data-ng-click="SaveEditor()">
+                                            <i class="fa fa-check"></i> Create Topic
+                                        </button>    -->
+                                        
+                                    </div>
+
+                                </div>
+                            </div>
+                        
+                        </td>
+                    </tr>               
+                    <!-- end Post -->
+
+				</tbody>
+			</table>
+
+			<!-- <div class="text-center">
+                <ul class="pagination pagination-sm">
+                    <li class="disabled"><a href="javascript:void(0);">Prev</a></li>
+                    <li class="active"><a href="javascript:void(0);">1</a></li>
+                    <li><a href="javascript:void(0);">2</a></li>
+                    <li><a href="javascript:void(0);">3</a></li>
+                    <li><a href="javascript:void(0);">...</a></li>
+                    <li><a href="javascript:void(0);">99</a></li>
+                    <li><a href="javascript:void(0);">Next</a></li>
+                </ul>
+            </div> -->
+
+		</div>
+	</div>
+
+</div>
+
+<!-- end row -->
+
+<!-- row -->
+
+<div class="row">
+
+	<!-- a blank row to get started -->
+
+</div>
+
+<!-- end row -->

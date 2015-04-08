@@ -1,0 +1,239 @@
+<!-- Bread crumb is created dynamically -->
+<div data-ng-controller="ForumTopicCtrl" data-ng-init="initGoTop()">
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-10">
+			<h1 class="page-title txt-color-blueDark">
+				<img ng-src="{{forumTopicRelation.PicSrc}}">
+				<a href="javascript:void(0);"
+				   class="txt-color-blueDark"
+				   data-ng-click="previous_ForumPage()">  
+					{{forumTopicRelation.TypeName}}
+				</a>
+				<span>> 
+					{{forumTopicRelation.TypeSubName}}
+				</span>
+			</h1>
+		</div>
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-2">
+			<!-- <button type="button" 
+					class="page-title btn btn-primary btn-sm btn-block"
+					data-ng-click="postNewArticles(forumTopicRelation.TypeSubName)">
+				<i class="glyphicon glyphicon-comment"></i>&nbsp;&nbsp;發表新文章
+			</button> -->
+		</div>
+	</div>
+
+	<div class="well">
+
+		<!-- row -->
+		<div class="row">
+
+			<div class="col-sm-12">
+
+				<form data-ng-if="UserInfo.U_Role == 'User'"
+					  action="" 
+					  id="smart-form-register" 
+					  class="smart-form">
+						<section>
+							<label class="input"> <i class="icon-append fa fa-edit fa-lg"></i>
+								<input type="text"
+									   class="input-lg"
+									   name="newarticles" 
+									   placeholder="按這裡發表新文章"
+									   data-ng-model="$parent.topic"
+									   data-ng-click="startNewArticles()">
+								<b class="tooltip tooltip-bottom-right">輸入文章</b> </label>
+						</section>
+				</form>
+
+				<div data-ng-show="showCreate">
+					
+					<editor-form uploadpath="uploadURL" foldername="folderName"></editor-form>
+				
+					<!-- <upload-form data-currentpath=""></upload-form> -->
+					<form action="" 
+						  method="post"
+						  target="id_iframe"
+		                  enctype="multipart/form-data">
+
+						<div class="widget-footer smart-form">
+
+							<div class="btn-group pull-left">
+								<div class="form-group">
+									<input id="attachments"
+										   type="file" 
+										   name="file" 
+										   class="btn btn-default"
+										   style="margin-top:5px;"
+										   ng-file-select="topicAttachments($files)"
+										   multiple/>
+								</div>
+							</div>
+
+							<div class="btn-group pull-left">
+                                <div class="form-group" style="min-height: 30px;padding-top: 5px;padding-left: 5px;">
+                                    <strong class="text-info">上傳檔案大小限制</strong><strong class="text-danger"> 25 MB</strong><strong class="text-info">以下</strong>
+                                </div>
+                            </div>
+
+							<div class="btn-group">
+								<input type="submit" 
+									   class="btn btn-sm btn-success" 
+									   data-ng-click="SaveEditor(forumTopicRelation, topic, attachments, UserInfo)"
+									   value="發表文章" />
+								
+							</div>
+
+							<div class="btn-group">
+								
+								<button class="btn btn-sm btn-primary" 
+								   		type="button"
+								   		data-ng-click="CloseEditor()">
+									<i class="fa fa-times"></i> 取消
+								</button>	
+											
+							</div>
+
+						</div>
+
+					</form>
+
+					<div class="bar-holder" ng-show="(selectedFiles != null) && (uploading == true)">
+						<div class="row sel-file" ng-repeat="f in selectedFiles">
+							<p>
+								<strong class="text-warning"><i>{{($index + 1)}}</i></strong> 
+								<img style="width:16px;height: 16px;" ng-show="dataUrls[$index]" ng-src="{{dataUrls[$index]}}">
+								<strong>{{f.name}}</strong> <code>{{fileSize(f.size)}}</code>
+								
+								<span class="txt-color-green pull-right" ng-show="progress[$index] == 100"><i class="fa fa-lg fa-check"></i></span>
+								<strong class="text-success pull-right">{{progress[$index]}}%</strong>
+								<a class="btn btn-danger btn-xs pull-right" href="javascript:void(0);" ng-click="abort($index)" ng-show="hasUploader($index) && progress[$index] < 100"><i class="fa fa-remove"></i> 中斷</a>
+							</p>
+							<div class="progress progress-xs">
+								<div class="progress progress-xs" ng-show="progress[$index] >= -1">
+									<div class="progress-bar bg-color-blue" role="progressbar" style="width: {{progress[$index]}}%;"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<iframe ng-hide="true" id="id_iframe" name="id_iframe" style=""></iframe>
+
+				</div>
+				<!-- <div class="well"> -->
+				<div style="min-height:653px">
+					<table class="table table-striped table-forum" data-ng-init="loadForumTopicData(forumTopicRelation.TypeSubName, 0, 10)">
+						<thead class="{{forumTopicRelation.BgColor}}">
+							<tr style="height: 43px;">
+								<th colspan="2">
+									<span class="{{forumTopicRelation.FontBgColor}}">
+										{{forumTopicRelation.TypeSubName}}
+									</span>
+								</th>
+								<th class="text-center hidden-xs hidden-sm" style="width: 200px;"><span class="{{forumTopicRelation.LabelBgColor}}">回覆數</span></th>
+								<th class="hidden-xs hidden-sm" style="width: 200px;"><span class="{{forumTopicRelation.LabelBgColor}}">發問者</span></th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- TR -->
+							<tr data-ng-repeat="data in forumTopicData">
+								<td colspan="2">
+									<h4>
+										<i class="fa fa-key text-muted" data-ng-if="data.F_State == false"></i>
+										<i class="fa fa-key text-warning" data-ng-if="data.F_State == true"></i>
+										<i class="fa fa-star text-muted" data-ng-if="data.F_Score == -1"></i>
+										<i class="fa fa-star text-warning" data-ng-if="data.F_Score != -1"></i>
+										<a href="javascript:void(0);"
+										   data-ng-click='enter_ForumPost(forumTopicRelation, data)'>
+										{{data.F_Topic}}
+										</a>
+									</h4>
+								</td>
+								<td class="text-center hidden-xs hidden-sm">
+									{{data.F_FloorEnd-1}}
+								</td>
+								<td class="hidden-xs hidden-sm">by 
+									<a href="javascript:void(0);">{{data.F_UserName}}</a>
+									<br>
+									<small><i>{{data.F_PublishDT}}</i></small>
+								</td>
+							</tr>
+							<!-- end TR -->										
+							
+						</tbody>
+					</table>
+				</div>
+
+				<div class="text-center" data-ng-if="forumTopicData.length>0">
+	                <pagination style="margin: 5px 0 5px 0;"
+								total-items="numFound" 
+								ng-model="currentPage" 
+								data-ng-click="SelectPage(forumTopicRelation.TypeSubName, currentPage)"
+								max-size="maxSize" 
+								class="pagination-sm" 
+								boundary-links="true"
+								rotate="false" 
+								num-pages="numPages"></pagination>
+	            </div>
+
+				<!-- </div> -->
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+<script type="text/javascript">
+	/* DO NOT REMOVE : GLOBAL FUNCTIONS!
+	 *
+	 * pageSetUp(); WILL CALL THE FOLLOWING FUNCTIONS
+	 *
+	 * // activate tooltips
+	 * $("[rel=tooltip]").tooltip();
+	 *
+	 * // activate popovers
+	 * $("[rel=popover]").popover();
+	 *
+	 * // activate popovers with hover states
+	 * $("[rel=popover-hover]").popover({ trigger: "hover" });
+	 *
+	 * // activate inline charts
+	 * runAllCharts();
+	 *
+	 * // setup widgets
+	 * setup_widgets_desktop();
+	 *
+	 * // run form elements
+	 * runAllForms();
+	 *
+	 ********************************
+	 *
+	 * pageSetUp() is needed whenever you load a page.
+	 * It initializes and checks for all basic elements of the page
+	 * and makes rendering easier.
+	 *
+	 */
+
+	pageSetUp();
+
+	/*
+	 * ALL PAGE RELATED SCRIPTS CAN GO BELOW HERE
+	 * eg alert("my home function");
+	 */
+
+	// pagefunction
+	
+	var pagefunction = function() {
+		$('.progress-bar').progressbar({
+			display_text : 'fill'
+		});
+	};
+	
+	// end pagefunction
+	
+	// run pagefunction on load
+	
+	loadScript("js/plugin/bootstrap-progressbar/bootstrap-progressbar.min.js", pagefunction);
+
+</script>
