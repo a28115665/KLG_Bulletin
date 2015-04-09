@@ -125,8 +125,17 @@
 			//Select Bulletin Table with UserInfo
 			if(m_queryname != null && m_queryname.equals("SelectBulletin")){
 
-				SQLCommand += " SELECT Bulletin.*, UserInfo.U_Department FROM Bulletin LEFT JOIN UserInfo ON UserInfo.U_Name = Bulletin.B_User ORDER BY Bulletin.B_PublishDT DESC";
-				
+				SQLCommand += " SELECT Bulletin.*, UserInfo.U_Department FROM Bulletin LEFT JOIN UserInfo ON UserInfo.U_Name = Bulletin.B_User WHERE 1=1 ";
+
+				while(it.hasNext()) {
+				    Object key = it.next(); // get key
+				    if(key.toString().equals("U_Department") && m_requestJSON.get(key.toString()) != null){
+						SQLCommand += "AND U_Department='"+m_requestJSON.get(key.toString())+"'";
+					}
+				}
+
+				SQLCommand += " ORDER BY Bulletin.B_PublishDT DESC ";
+
 				return SQLCommand;
 			}
 

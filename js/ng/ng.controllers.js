@@ -831,21 +831,23 @@ angular.module('app.forumControllers', [])
 
 	.controller('MasterPageCtrl', ['$scope', '$rootScope', '$location', '$http', '$filter', '$cookieStore', '$modal', 'forumService', 'toaster', function ($scope, $rootScope, $location, $http, $filter, $cookieStore, $modal, forumService, toaster) {
 
-		$scope.loadBulletinData = function(startTime, endTime){
-
+		$scope.loadBulletinData = function(department){
 			var 公佈欄 = {
                 title: "loadTotalCar",
                 jspUrl: "jsp/",
                 handler: "DBSelect.jsp",
                 addr: $rootScope._URL,
-                queryname: 'SelectBulletin'
+                queryname: 'SelectBulletin',
+                query:{
+                    U_Department : department
+                }
             };
             var promise = forumService.searchMSSQLData(公佈欄);
             promise.then(function(res) {
                 // console.log('公佈欄:', res.selectObject);
             	$scope.numFoundBL = res.selectObject.length;
                 if(res.selectObject.length == 0){
-                    toaster.pop('warning', "", "無任何公佈欄資料", 3000);
+                    toaster.pop('warning', "", department + "查無任何公佈欄資料", 3000);
                 }else{
                     $scope.bulletinData = [];
 	            	res.selectObject = PutTop5Type(res.selectObject);
@@ -1064,7 +1066,11 @@ angular.module('app.forumControllers', [])
                 promise.then(function(res) {
                     toaster.pop('success', "", "新增成功", 3000);
                     // location.reload();
-                    $scope.loadBulletinData();
+                    if($scope.UserInfo.U_Department == '管理員'){
+                        $scope.loadBulletinData();
+                    }else{
+                        $scope.loadBulletinData($scope.UserInfo.U_Department);
+                    }
                 }, function(data) {
                     // return 'Fail';
                     toaster.pop('danger', "", "新增失敗", 3000);
@@ -1149,7 +1155,11 @@ angular.module('app.forumControllers', [])
                     if(res.trim() == "Success"){
                         // console.log("更新成功");
                         toaster.pop('success', "", "更新成功", 3000);
-                        $scope.loadBulletinData();
+                        if($scope.UserInfo.U_Department == '管理員'){
+                            $scope.loadBulletinData();
+                        }else{
+                            $scope.loadBulletinData($scope.UserInfo.U_Department);
+                        }
                         promise.reject();
                     }else{
                         // console.log("更新失敗");

@@ -78,7 +78,7 @@
 
 </div>
 
-<div data-ng-show="UserInfo.U_Role == 'Admin'">
+<div data-ng-if="UserInfo.U_Role == 'Admin'">
 	<ul id="myTab1" class="nav nav-tabs bordered">
 		<li class="active">
 			<a href="#s1" data-toggle="tab"><i class="fa fa-fw fa-lg fa-sign-in"></i>&nbsp;帳號列表</a>
@@ -122,6 +122,21 @@
 			 data-ng-controller="SettingCtrl" 
 			 data-ng-init="loadDepartment()"
 			 data-ng-include="'views/SettingChild/自訂部門單位.html'"></div>
+	</div>
+</div>
+
+<div data-ng-if="UserInfo.U_Role == 'User'">
+	<ul id="myTab1" class="nav nav-tabs bordered">
+		<li class="active">
+			<a href="#s1" data-toggle="tab"><i class="fa fa-fw fa-lg fa-table"></i>&nbsp;公佈欄列表 </a>
+		</li>
+	</ul>
+	<div id="myTabContent1" class="tab-content padding-10 well">
+		<div class="tab-pane fade in active" 
+			 id="s1"
+			 data-ng-controller="MasterPageCtrl"
+			 data-ng-init='loadBulletinData(UserInfo.U_Department)'
+			 data-ng-include="'views/SettingChild/公佈欄列表.html'"></div>
 	</div>
 </div>
 
