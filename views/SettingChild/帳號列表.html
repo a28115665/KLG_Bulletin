@@ -87,13 +87,13 @@
 							   name="start_interval" 
 							   class="onoffswitch-checkbox"
 							   id="acount{{$index}}"
-							   data-ng-click="ChangeCheck($index)"
+							   data-ng-click="ChangeCheck($index + (ACcurrentPage - 1) * 10)"
 							   checked>
 						<input data-ng-if="data.U_Check == false"
 							   type="checkbox" 
 							   name="start_interval" 
 							   class="onoffswitch-checkbox"
-							   data-ng-click="ChangeCheck($index)" 
+							   data-ng-click="ChangeCheck($index + (ACcurrentPage - 1) * 10)" 
 							   id="acount{{$index}}">
 						<label class="onoffswitch-label" 
 							   for="acount{{$index}}"> 

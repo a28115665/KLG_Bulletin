@@ -10,7 +10,7 @@
 		 		 java.sql.*"
 %>
 <%
-	String conn_str = "jdbc:sqlserver://192.168.124.132:1433;databaseName=KLG_Bulletin;user=sa;password=p@ssw0rd;";
+	String conn_str = "jdbc:sqlserver://192.168.124.131:1433;databaseName=KLG_Bulletin;user=sa;password=p@ssw0rd;";
 	Connection conn = null;
 	File now_directory = new File(".");
 	String absolutePath = now_directory.getAbsolutePath().replaceAll("\\.","");

@@ -52,7 +52,7 @@
 		<div class="col-xs-12 col-sm-2 text-right">
 			<button type="button" 
 					class="btn btn-labeled btn-warning"
-					data-ng-click="SetOnTop5(bulletinData)">
+					data-ng-click="SetOnTop5(bulletinCommandData)">
 			 	<span class="btn-label">
 			  		<i class="fa fa-unlock-alt"></i>
 			 	</span>公布欄至頂確認
@@ -81,7 +81,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr data-ng-repeat="data in filteredBoardStores.slice((currentPageBL - 1) * 10, (currentPageBL - 1) * 10 + 10)">
+			<tr data-ng-repeat="data in filteredBoardCommandStores.slice((currentPageBCL - 1) * 10, (currentPageBCL - 1) * 10 + 10)">
 				<td class="text-center">
 					<span class="onoffswitch">
 						<input data-ng-if="data.B_Top5Lock == true"
@@ -89,13 +89,13 @@
 							   name="start_interval" 
 							   class="onoffswitch-checkbox"
 							   id="st{{$index}}"
-							   data-ng-click="ChangeTop5Lock($index + (currentPageBL - 1) * 10)"
+							   data-ng-click="ChangeTop5LockForCommand($index + (currentPageBCL - 1) * 10)"
 							   checked>
 						<input data-ng-if="data.B_Top5Lock == false"
 							   type="checkbox" 
 							   name="start_interval" 
 							   class="onoffswitch-checkbox"
-							   data-ng-click="ChangeTop5Lock($index + (currentPageBL - 1) * 10)" 
+							   data-ng-click="ChangeTop5LockForCommand($index + (currentPageBCL - 1) * 10)" 
 							   id="st{{$index}}">
 						<label class="onoffswitch-label" 
 							   for="st{{$index}}"> 
@@ -138,18 +138,18 @@
 
 <div class="dt-toolbar-footer">
 	<div class="col-xs-12 col-sm-12 hidden-xs text-center"
-		 data-ng-if="filteredBoardStores.length == 0">
+		 data-ng-if="filteredBoardCommandStores.length == 0">
 		<strong>無資料</strong>
 	</div>
 	<div class="col-xs-12 col-sm-6 hidden-xs"
-		 data-ng-if="filteredBoardStores.length > 0">
+		 data-ng-if="filteredBoardCommandStores.length > 0">
 	</div>
 	<div class="col-xs-12 col-sm-6"
-		 data-ng-if="filteredBoardStores.length > 0">
+		 data-ng-if="filteredBoardCommandStores.length > 0">
 		<pagination style="margin: 5px 0 5px 0;"
-					total-items="filteredBoardStores.length" 
-					ng-model="currentPageBL" 
-					data-ng-click="SelectPage(currentPageBL, '公佈欄')"
+					total-items="filteredBoardCommandStores.length" 
+					ng-model="currentPageBCL" 
+					data-ng-click="SelectPage(currentPageBCL, '週報資料')"
 					max-size="maxSize" 
 					class="pagination-sm" 
 					boundary-links="true"
@@ -169,7 +169,7 @@
     </div>
     <div class="modal-body">
         <editor-form uploadpath="uploadURL" foldername="folderName" content="selected.B_Content" files="selected.B_Files" ></editor-form>
-		<!--<form action="" 
+		<form action="" 
 			  method="post"
 			  target="id_iframe"
               enctype="multipart/form-data">
@@ -211,7 +211,7 @@
 					</div>
 				</div>
 			</div>
-		</div>-->
+		</div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-success" ng-click="ok(selected.B_Topic, attachments, UserInfo)">確認編輯</button>

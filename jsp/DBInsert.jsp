@@ -15,8 +15,8 @@
 		SQLCommand += DBTables(request.getParameter("table"));
 
 		String insertname = request.getParameter("insertname");
-		//String insert = URLDecoder.decode(request.getParameter("insert"),"UTF-8");
-		String insert = request.getParameter("insert");
+		String insert = URLDecoder.decode(request.getParameter("insert"),"UTF-8");
+		//String insert = request.getParameter("insert");
 		if(insert != null){
 			//out.println(request.getParameter("insert"));
 			JSONObject requestJSON = new JSONObject(insert);

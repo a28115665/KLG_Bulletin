@@ -84,7 +84,7 @@
 			<a href="#s1" data-toggle="tab"><i class="fa fa-fw fa-lg fa-sign-in"></i>&nbsp;帳號列表</a>
 		</li>
 		<li>
-			<a href="#s2" data-toggle="tab"><i class="fa fa-fw fa-lg fa-table"></i>&nbsp;公佈欄列表 </a>
+			<a href="#s2" data-toggle="tab"><i class="fa fa-fw fa-lg fa-table"></i>&nbsp;公布欄列表 </a>
 		</li>
 		<!-- <li>
 			<a href="#s3" data-toggle="tab"><i class="fa fa-fw fa-lg fa-question"></i>&nbsp;所有問題列表 </a>
@@ -128,7 +128,7 @@
 <div data-ng-if="UserInfo.U_Role == 'User'">
 	<ul id="myTab1" class="nav nav-tabs bordered">
 		<li class="active">
-			<a href="#s1" data-toggle="tab"><i class="fa fa-fw fa-lg fa-table"></i>&nbsp;公佈欄列表 </a>
+			<a href="#s1" data-toggle="tab"><i class="fa fa-fw fa-lg fa-table"></i>&nbsp;公布欄列表 </a>
 		</li>
 	</ul>
 	<div id="myTabContent1" class="tab-content padding-10 well">
@@ -136,7 +136,20 @@
 			 id="s1"
 			 data-ng-controller="MasterPageCtrl"
 			 data-ng-init='loadBulletinData(UserInfo.U_Department)'
-			 data-ng-include="'views/SettingChild/公佈欄列表.html'"></div>
+			 data-ng-include="'views/SettingChild/公佈欄列表.html'"
+			 ng-if="UserInfo.U_Department != '秘書科' && UserInfo.U_Department != '勤務指揮中心'"></div>
+		<div class="tab-pane fade in active" 
+			 id="s1"
+			 data-ng-controller="MasterPageCtrl"
+			 data-ng-init='loadBulletinData(UserInfo.U_Department)'
+			 data-ng-include="'views/SettingChild/秘書科列表.html'"
+			 ng-if="UserInfo.U_Department == '秘書科'"></div>
+		<div class="tab-pane fade in active" 
+			 id="s1"
+			 data-ng-controller="MasterPageCtrl"
+			 data-ng-init='loadBulletinData(UserInfo.U_Department)'
+			 data-ng-include="'views/SettingChild/勤務指揮中心列表.html'"
+			 ng-if="UserInfo.U_Department == '勤務指揮中心'"></div>
 	</div>
 </div>
 

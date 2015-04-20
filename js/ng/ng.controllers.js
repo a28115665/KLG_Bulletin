@@ -807,7 +807,7 @@ angular.module('app.forumControllers', [])
 	                        $scope.show['Error'].bool = true;
 	                        $scope.show['Error'].Messages = '帳號已有人使用';
 	                    }else{
-	                    	console.log($scope.registers);
+	                    	// console.log($scope.registers);
 	                        if(AuthService.register($scope.registers) == 'Success'){
 	                            $scope.show['Error'].bool = false;
 	                            // $scope.show['Success'].bool = true;
@@ -845,28 +845,72 @@ angular.module('app.forumControllers', [])
             var promise = forumService.searchMSSQLData(公佈欄);
             promise.then(function(res) {
                 // console.log('公佈欄:', res.selectObject);
-            	$scope.numFoundBL = res.selectObject.length;
+
+                switch(department){
+                    case '秘書科':
+                        $scope.numFoundBSL = res.selectObject.length;
+                    break;
+                    case '勤務指揮中心':
+                        $scope.numFoundBCL = res.selectObject.length;
+                    break;
+                    default:
+                        // 知道選了目前選擇的單位
+                        $scope.choseDepartment = department
+                        $scope.numFoundBL = res.selectObject.length;
+                    break;
+                }
+
                 if(res.selectObject.length == 0){
-                    toaster.pop('warning', "", department + "查無任何公佈欄資料", 3000);
+                    toaster.pop('warning', "", department + "查無任何公布欄資料", 3000);
                 }else{
-                    $scope.bulletinData = [];
-	            	res.selectObject = PutTop5Type(res.selectObject);
-                    for (var i in res.selectObject) {
-                        if(res.selectObject[i].B_Top5Lock == 1){
-                            $scope.bulletinData.push(res.selectObject[i]);
+                    if(department == '秘書科'){
+                        $scope.bulletinSecretaryData = [];
+                        res.selectObject = PutTop5Type(res.selectObject);
+                        for (var i in res.selectObject) {
+                            if(res.selectObject[i].B_Top5Lock == 1){
+                                $scope.bulletinSecretaryData.push(res.selectObject[i]);
+                            }
                         }
-                    }
-                    for (var i in res.selectObject) {
-                        if(res.selectObject[i].B_Top5Lock == 0){
-                            $scope.bulletinData.push(res.selectObject[i]);
+                        for (var i in res.selectObject) {
+                            if(res.selectObject[i].B_Top5Lock == 0){
+                                $scope.bulletinSecretaryData.push(res.selectObject[i]);
+                            }
                         }
+                        $scope.searchData($scope.bulletinSecretaryData,"BulletinSecretary");
+                    }else if(department == '勤務指揮中心'){
+                        $scope.bulletinCommandData = [];
+                        res.selectObject = PutTop5Type(res.selectObject);
+                        for (var i in res.selectObject) {
+                            if(res.selectObject[i].B_Top5Lock == 1){
+                                $scope.bulletinCommandData.push(res.selectObject[i]);
+                            }
+                        }
+                        for (var i in res.selectObject) {
+                            if(res.selectObject[i].B_Top5Lock == 0){
+                                $scope.bulletinCommandData.push(res.selectObject[i]);
+                            }
+                        }
+                        $scope.searchData($scope.bulletinCommandData,"BulletinCommand");
+                    }else{
+                        $scope.bulletinData = [];
+                        res.selectObject = PutTop5Type(res.selectObject);
+                        for (var i in res.selectObject) {
+                            if(res.selectObject[i].B_Top5Lock == 1){
+                                $scope.bulletinData.push(res.selectObject[i]);
+                            }
+                        }
+                        for (var i in res.selectObject) {
+                            if(res.selectObject[i].B_Top5Lock == 0){
+                                $scope.bulletinData.push(res.selectObject[i]);
+                            }
+                        }
+                        $scope.searchData($scope.bulletinData,"Bulletin");
                     }
-	            	$scope.searchData($scope.bulletinData,"Bulletin");
                     // console.log($scope.bulletinData);
                     // $scope.vm10Data = res.selectObject;
                 };
             }, function(data) {
-                return console.log('讀取綜覽資料Failed');
+                return console.log('讀取公布欄資料Failed');
             });
 		};
 
@@ -886,9 +930,13 @@ angular.module('app.forumControllers', [])
                     toaster.pop('warning', "", "無任何部門單位相關資料", 3000);
                 }else{
                     $scope.departmentData = [];
+                    $scope.departmentDataForMenu = [];
                     $scope.numFoundOD = res.selectObject.length;
                     for (var i in res.selectObject) {
                         $scope.departmentData.push(res.selectObject[i].D_NAME);
+                        if(res.selectObject[i].D_NAME != '秘書科' && res.selectObject[i].D_NAME != '勤務指揮中心'){
+                            $scope.departmentDataForMenu.push(res.selectObject[i].D_NAME);
+                        }
                     }
                 };
             }, function(data) {
@@ -940,6 +988,18 @@ angular.module('app.forumControllers', [])
             $scope.bulletinData[$index]['F_HasChange'] = true;
         };
 
+        $scope.ChangeTop5LockForSecretary = function($index) {
+            $scope.bulletinSecretaryData[$index].B_Top5Lock = !$scope.bulletinSecretaryData[$index].B_Top5Lock;
+            // 表示被更改
+            $scope.bulletinSecretaryData[$index]['F_HasChange'] = true;
+        };
+
+        $scope.ChangeTop5LockForCommand = function($index) {
+            $scope.bulletinCommandData[$index].B_Top5Lock = !$scope.bulletinCommandData[$index].B_Top5Lock;
+            // 表示被更改
+            $scope.bulletinCommandData[$index]['F_HasChange'] = true;
+        };
+
         $scope.SetOnTop5 = function(bulletinData) {
 
             var onlyChangeBulletinUpdate = [];
@@ -959,7 +1019,6 @@ angular.module('app.forumControllers', [])
                 delete onlyChangeBulletinUpdate[i]['U_Department'];
                 onlyChangeBulletinUpdate[i].B_Top5Lock = onlyChangeBulletinUpdate[i].B_Top5Lock == true ? 1 : 0 ;
                 // console.log(onlyChangeBulletinUpdate[i]);
-
                 var d = new Date();
                 var update帳號管理 = {
                     active: true,
@@ -982,7 +1041,11 @@ angular.module('app.forumControllers', [])
                     if(res.trim() == "Success"){
                         // console.log("更新成功");
                         toaster.pop('success', "", "更新成功", 3000);
-                        $scope.loadBulletinData();
+                        if($scope.UserInfo.U_Department == '系統管理'){
+                            $scope.loadBulletinData();
+                        }else{
+                            $scope.loadBulletinData($scope.UserInfo.U_Department);
+                        }
                         promise.reject();
                     }else{
                         // console.log("更新失敗");
@@ -998,12 +1061,31 @@ angular.module('app.forumControllers', [])
             }
         };
 
+        $scope.whichTab = {
+            name : '各單位公告',
+            tab  : 'tab1'
+        };
+        $scope.changeTab = function (name, tabs) { 
+            $scope.whichTab.name = name;
+            $scope.whichTab.tab = tabs;
+        };
+
 		$scope.filteredBoardStores = [];
         $scope.searchKeywords = {
             B_PublishD   : '',
             U_Department : '',
             B_Topic      : '',
             B_User       : ''
+        };
+        $scope.filteredBoardSecretaryStores = [];
+        $scope.searchSecretaryKeywords = {
+            B_PublishD   : '',
+            B_Topic      : '',
+        };
+        $scope.filteredBoardCommandStores = [];
+        $scope.searchCommandKeywords = {
+            B_PublishD   : '',
+            B_Topic      : '',
         };
 		$scope.searchData = function(data, module) {
             switch (module) {
@@ -1012,6 +1094,14 @@ angular.module('app.forumControllers', [])
                     $scope.searchKeywords.U_Department = $scope.searchKeywords.U_Department == null ? '' : $scope.searchKeywords.U_Department;
                     // console.log($scope.searchKeywords.B_PublishD);
                     return $scope.filteredBoardStores = $filter("filter")(data, $scope.searchKeywords), $scope.onFilterChange();
+                break;
+                case "BulletinSecretary":
+                    $scope.searchSecretaryKeywords.B_PublishD = $scope.searchSecretaryKeywords.B_PublishD == null || $scope.searchSecretaryKeywords.B_PublishD == '' ? '' : forumService.SetDateToSort(new Date($scope.searchSecretaryKeywords.B_PublishD));
+                    return $scope.filteredBoardSecretaryStores = $filter("filter")(data, $scope.searchSecretaryKeywords), $scope.onFilterSecretaryChange();
+                break;
+                case "BulletinCommand":
+                    $scope.searchCommandKeywords.B_PublishD = $scope.searchCommandKeywords.B_PublishD == null || $scope.searchCommandKeywords.B_PublishD == '' ? '' : forumService.SetDateToSort(new Date($scope.searchCommandKeywords.B_PublishD));
+                    return $scope.filteredBoardCommandStores = $filter("filter")(data, $scope.searchCommandKeywords), $scope.onFilterCommandChange();
                 break;
             }
         };
@@ -1066,7 +1156,7 @@ angular.module('app.forumControllers', [])
                 promise.then(function(res) {
                     toaster.pop('success', "", "新增成功", 3000);
                     // location.reload();
-                    if($scope.UserInfo.U_Department == '管理員'){
+                    if($scope.UserInfo.U_Department == '系統'){
                         $scope.loadBulletinData();
                     }else{
                         $scope.loadBulletinData($scope.UserInfo.U_Department);
@@ -1155,7 +1245,7 @@ angular.module('app.forumControllers', [])
                     if(res.trim() == "Success"){
                         // console.log("更新成功");
                         toaster.pop('success', "", "更新成功", 3000);
-                        if($scope.UserInfo.U_Department == '管理員'){
+                        if($scope.UserInfo.U_Department == '系統'){
                             $scope.loadBulletinData();
                         }else{
                             $scope.loadBulletinData($scope.UserInfo.U_Department);
@@ -1225,7 +1315,11 @@ angular.module('app.forumControllers', [])
                         switch(which){
                             case '公佈欄':
                                 // $scope.board = [];
-                                $scope.loadBulletinData();
+                                if($scope.UserInfo.U_Department == '秘書科' || $scope.UserInfo.U_Department == '勤務指揮中心'){
+                                    $scope.loadBulletinData($scope.UserInfo.U_Department);
+                                }else{
+                                    $scope.loadBulletinData();
+                                }
                             break;
                             case '問題列表':
                                 $scope.questionList = [];
@@ -1323,6 +1417,12 @@ angular.module('app.forumControllers', [])
         		case '公佈欄':
         			$scope.currentPageBL = currentPage;
         		break;
+                case '局務會報資料':
+                    $scope.currentPageBSL = currentPage;
+                break;
+                case '週報資料':
+                    $scope.currentPageBCL = currentPage;
+                break;
         		case '問題列表':
         			$scope.currentPageQL = currentPage;
         			$scope.questionList = [];
@@ -1333,6 +1433,8 @@ angular.module('app.forumControllers', [])
 
 		return  $scope.disabled = 'disabled',
 				$scope.currentPageBL = 1,
+                $scope.currentPageBSL = 1,
+                $scope.currentPageBCL = 1,
 				$scope.currentPageQL = 1,
 				$scope.numFoundBL = 0,
 				$scope.numFoundQL = 0,
@@ -1340,11 +1442,23 @@ angular.module('app.forumControllers', [])
 				$scope.onFilterChange = function() {
 		            return $scope.currentPageBL = 1, $scope.totalPage = $scope.filteredBoardStores.length / 10;
 		        },
+                $scope.onFilterSecretaryChange = function() {
+                    return $scope.currentPageBSL = 1, $scope.totalSPage = $scope.filteredBoardSecretaryStores.length / 10;
+                },
+                $scope.onFilterCommandChange = function() {
+                    return $scope.currentPageBCL = 1, $scope.totalCPage = $scope.filteredBoardCommandStores.length / 10;
+                },
 				$scope.previousPage = function (whichTab) {
 					switch (whichTab) {
 						case "公佈欄":
 							$scope.currentPageBL -= 1; 
 						break;
+                        case "局務會報資料":
+                            $scope.currentPageBSL -= 1; 
+                        break;
+                        case "週報資料":
+                            $scope.currentPageBCL -= 1; 
+                        break;
 						case "問題列表": 
 							$scope.currentPageQL -= 1; 
 							$scope.questionList = [];
@@ -1357,6 +1471,12 @@ angular.module('app.forumControllers', [])
 						case "公佈欄":
 							$scope.currentPageBL += 1; 
 						break;
+                        case "局務會報資料":
+                            $scope.currentPageBSL += 1; 
+                        break;
+                        case "週報資料":
+                            $scope.currentPageBCL += 1; 
+                        break;
 						case "問題列表": 
 							$scope.currentPageQL += 1; 
 							$scope.questionList = [];
