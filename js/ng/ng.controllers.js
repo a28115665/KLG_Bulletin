@@ -1041,7 +1041,7 @@ angular.module('app.forumControllers', [])
                     if(res.trim() == "Success"){
                         // console.log("更新成功");
                         toaster.pop('success', "", "更新成功", 3000);
-                        if($scope.UserInfo.U_Department == '系統管理'){
+                        if($scope.UserInfo.U_Department == '系統'){
                             $scope.loadBulletinData();
                         }else{
                             $scope.loadBulletinData($scope.UserInfo.U_Department);
@@ -1315,10 +1315,10 @@ angular.module('app.forumControllers', [])
                         switch(which){
                             case '公佈欄':
                                 // $scope.board = [];
-                                if($scope.UserInfo.U_Department == '秘書科' || $scope.UserInfo.U_Department == '勤務指揮中心'){
-                                    $scope.loadBulletinData($scope.UserInfo.U_Department);
-                                }else{
+                                if($scope.UserInfo.U_Department == '系統'){
                                     $scope.loadBulletinData();
+                                }else{
+                                    $scope.loadBulletinData($scope.UserInfo.U_Department);
                                 }
                             break;
                             case '問題列表':
