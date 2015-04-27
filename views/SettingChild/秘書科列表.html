@@ -88,17 +88,19 @@
 							   type="checkbox" 
 							   name="start_interval" 
 							   class="onoffswitch-checkbox"
-							   id="st{{$index}}"
+							   id="bss{{$index}}"
 							   data-ng-click="ChangeTop5LockForSecretary($index + (currentPageBSL - 1) * 10)"
-							   checked>
+							   checked
+							   ng-disabled="UserInfo.U_Department != data.U_Department">
 						<input data-ng-if="data.B_Top5Lock == false"
 							   type="checkbox" 
 							   name="start_interval" 
 							   class="onoffswitch-checkbox"
 							   data-ng-click="ChangeTop5LockForSecretary($index + (currentPageBSL - 1) * 10)" 
-							   id="st{{$index}}">
+							   id="bss{{$index}}"
+							   ng-disabled="UserInfo.U_Department != data.U_Department">
 						<label class="onoffswitch-label" 
-							   for="st{{$index}}"> 
+							   for="bss{{$index}}"> 
 							<span class="onoffswitch-inner" data-swchon-text="YES" data-swchoff-text="NO">
 
 							</span> 
@@ -118,14 +120,16 @@
 				<td class="text-center">
 					<a href="javascript:void(0);" 
 					class="btn btn-success btn-xs txt-color-white"
-					data-ng-click="editorData(data,'公佈欄')">
+					data-ng-click="editorData(data,'公佈欄')"
+				    ng-disabled="UserInfo.U_Department != data.U_Department">
 						<i class="fa fa-pencil-square-o fa-lg"></i>
 					</a>
 				</td>
 				<td class="text-center">
 					<a href="javascript:void(0);" 
 					class="btn btn-danger btn-xs txt-color-white"
-					data-ng-click="deleteData(data,'公佈欄')">
+					data-ng-click="deleteData(data,'公佈欄')"
+				    ng-disabled="UserInfo.U_Department != data.U_Department">
 						<i class="fa fa-minus-square fa-lg"></i>
 					</a>
 				</td>

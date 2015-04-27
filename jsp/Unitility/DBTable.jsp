@@ -85,6 +85,9 @@
 				    if(key.toString().equals("B_Top5Lock") && m_requestJSON.get(key.toString()) != null){
 						SQLCommand += "AND B_Top5Lock='"+m_requestJSON.get(key.toString())+"'";
 					}
+				    if(key.toString().equals("B_PostTab") && m_requestJSON.get(key.toString()) != null){
+						SQLCommand += "AND B_PostTab='"+m_requestJSON.get(key.toString())+"'";
+					}
 				}
 				return SQLCommand;
 			}
@@ -131,6 +134,9 @@
 				    Object key = it.next(); // get key
 				    if(key.toString().equals("U_Department") && m_requestJSON.get(key.toString()) != null){
 						SQLCommand += "AND U_Department='"+m_requestJSON.get(key.toString())+"'";
+					}
+				    if(key.toString().equals("B_PostTab") && m_requestJSON.get(key.toString()) != null){
+						SQLCommand += "AND B_PostTab='"+m_requestJSON.get(key.toString())+"'";
 					}
 				}
 

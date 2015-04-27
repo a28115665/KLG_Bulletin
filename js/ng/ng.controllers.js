@@ -831,26 +831,31 @@ angular.module('app.forumControllers', [])
 
 	.controller('MasterPageCtrl', ['$scope', '$rootScope', '$location', '$http', '$filter', '$cookieStore', '$modal', 'forumService', 'toaster', function ($scope, $rootScope, $location, $http, $filter, $cookieStore, $modal, forumService, toaster) {
 
-		$scope.loadBulletinData = function(department){
-			var 公佈欄 = {
-                title: "loadTotalCar",
-                jspUrl: "jsp/",
-                handler: "DBSelect.jsp",
-                addr: $rootScope._URL,
-                queryname: 'SelectBulletin',
-                query:{
-                    U_Department : department
-                }
-            };
+		$scope.loadBulletinData = function(department, postTab){
+
+			var queryCondition = (department == '秘書科' ||  department == '勤務指揮中心') ? {
+                    B_PostTab : postTab
+                } : {
+                    U_Department : department,
+                    B_PostTab : postTab
+                },
+                公佈欄 = {
+                    title: "loadTotalCar",
+                    jspUrl: "jsp/",
+                    handler: "DBSelect.jsp",
+                    addr: $rootScope._URL,
+                    queryname: 'SelectBulletin',
+                    query: queryCondition
+                };
             var promise = forumService.searchMSSQLData(公佈欄);
             promise.then(function(res) {
                 // console.log('公佈欄:', res.selectObject);
 
-                switch(department){
-                    case '秘書科':
+                switch(postTab){
+                    case 1:
                         $scope.numFoundBSL = res.selectObject.length;
                     break;
-                    case '勤務指揮中心':
+                    case 2:
                         $scope.numFoundBCL = res.selectObject.length;
                     break;
                     default:
@@ -861,9 +866,16 @@ angular.module('app.forumControllers', [])
                 }
 
                 if(res.selectObject.length == 0){
-                    toaster.pop('warning', "", department + "查無任何公布欄資料", 3000);
+                    if(department != null){
+                        toaster.pop('warning', "", department + "查無任何公布欄資料", 3000);
+                    }else if(department == null && postTab == 1){
+                        toaster.pop('warning', "", "局務會報資料查無任何公布欄資料", 3000);
+                    }else if(department == null && postTab == 2){
+                        toaster.pop('warning', "", "週報資料查無任何公布欄資料", 3000);
+                    }
                 }else{
-                    if(department == '秘書科'){
+                    //秘書科
+                    if(postTab == 1){
                         $scope.bulletinSecretaryData = [];
                         res.selectObject = PutTop5Type(res.selectObject);
                         for (var i in res.selectObject) {
@@ -876,8 +888,11 @@ angular.module('app.forumControllers', [])
                                 $scope.bulletinSecretaryData.push(res.selectObject[i]);
                             }
                         }
+                        // console.log($scope.bulletinSecretaryData);
                         $scope.searchData($scope.bulletinSecretaryData,"BulletinSecretary");
-                    }else if(department == '勤務指揮中心'){
+                    }
+                    //勤務指揮中心
+                    else if(postTab == 2){
                         $scope.bulletinCommandData = [];
                         res.selectObject = PutTop5Type(res.selectObject);
                         for (var i in res.selectObject) {
@@ -890,6 +905,7 @@ angular.module('app.forumControllers', [])
                                 $scope.bulletinCommandData.push(res.selectObject[i]);
                             }
                         }
+                        // console.log($scope.bulletinCommandData);
                         $scope.searchData($scope.bulletinCommandData,"BulletinCommand");
                     }else{
                         $scope.bulletinData = [];
@@ -1043,6 +1059,10 @@ angular.module('app.forumControllers', [])
                         toaster.pop('success', "", "更新成功", 3000);
                         if($scope.UserInfo.U_Department == '系統'){
                             $scope.loadBulletinData();
+                        }else if(onlyChangeBulletinUpdate[i].B_PostTab == 1){
+                            $scope.loadBulletinData($scope.UserInfo.U_Department, 1);
+                        }else if(onlyChangeBulletinUpdate[i].B_PostTab == 2){
+                            $scope.loadBulletinData($scope.UserInfo.U_Department, 2);
                         }else{
                             $scope.loadBulletinData($scope.UserInfo.U_Department);
                         }
@@ -1131,7 +1151,8 @@ angular.module('app.forumControllers', [])
                 	B_Content    : selected.content, 
                     B_Files      : selected.files, 
 					B_User       : selected.name,
-					B_Top5Lock   : 0
+					B_Top5Lock   : 0,
+                    B_PostTab    : selected.postTab
 				};
 
 				var insert新增佈告欄 = {
@@ -1149,7 +1170,8 @@ angular.module('app.forumControllers', [])
                         B_Content    : boardData.B_Content,
                         B_Files      : boardData.B_Files,
                         B_User       : boardData.B_User,
-                        B_Top5Lock   : boardData.B_Top5Lock
+                        B_Top5Lock   : boardData.B_Top5Lock,
+                        B_PostTab    : boardData.B_PostTab
                     }
                 };
                 var promise = forumService.insertMSSQLData(insert新增佈告欄);
@@ -1159,7 +1181,7 @@ angular.module('app.forumControllers', [])
                     if($scope.UserInfo.U_Department == '系統'){
                         $scope.loadBulletinData();
                     }else{
-                        $scope.loadBulletinData($scope.UserInfo.U_Department);
+                        $scope.loadBulletinData($scope.UserInfo.U_Department, boardData.B_PostTab);
                     }
                 }, function(data) {
                     // return 'Fail';
@@ -1493,8 +1515,16 @@ angular.module('app.forumControllers', [])
             $scope.alertMessage = "",
             $scope.selected = {
                 topic: "",
-                content: ""
+                content: "",
+                postTab: 1
             }, 
+            $scope.postTab = [{
+                id: 1,
+                name: '局務會報資料'
+            },{
+                id: 2,
+                name: '週報資料'
+            }]
 
             $scope.fileReaderSupported = window.FileReader != null && (window.FileAPI == null || FileAPI.html5 != false);
             $scope.attachments = [];
@@ -1635,7 +1665,7 @@ angular.module('app.forumControllers', [])
                 return $scope.finalContent;
             },
 
-            $scope.ok = function(topic, attachments, UserInfo) {
+            $scope.ok = function(topic, attachments, UserInfo, postTab) {
         		//console.log(topic, UserInfo);
 
                 if(topic == '' || topic == null){
@@ -1659,13 +1689,24 @@ angular.module('app.forumControllers', [])
                             if($scope.uploading == false){
                                 // console.log('有檔案',$scope.uploading,index);
                                 // UpdateTopicForum(forumTopicRelation, Topic, attachments, UserInfo);
-                                $scope.selected = {
-                                    id: UserInfo.U_ID,
-                                    name: UserInfo.U_Name,
-                                    topic: topic,
-                                    content: angular.element(document.querySelector('.note-editable')).html(),
-                                    files: $scope.attachmentsToContent(attachments)
-                                };
+                                if(UserInfo.U_Department == '秘書科' || UserInfo.U_Department == '勤務指揮中心'){
+                                    $scope.selected = {
+                                        id: UserInfo.U_ID,
+                                        name: UserInfo.U_Name,
+                                        topic: topic,
+                                        content: angular.element(document.querySelector('.note-editable')).html(),
+                                        files: $scope.attachmentsToContent(attachments),
+                                        postTab: postTab
+                                    };
+                                }else{
+                                    $scope.selected = {
+                                        id: UserInfo.U_ID,
+                                        name: UserInfo.U_Name,
+                                        topic: topic,
+                                        content: angular.element(document.querySelector('.note-editable')).html(),
+                                        files: $scope.attachmentsToContent(attachments)
+                                    };
+                                }
                                 $modalInstance.close($scope.selected)
                             }
                         }, function(data) {
@@ -1675,13 +1716,24 @@ angular.module('app.forumControllers', [])
                 }else{
                     // console.log('無檔案');
                     // UpdateTopicForum(forumTopicRelation, Topic, attachments, UserInfo);
-                    $scope.selected = {
-                        id: UserInfo.U_ID,
-                        name: UserInfo.U_Name,
-                        topic: topic,
-                        content: angular.element(document.querySelector('.note-editable')).html(),
-                        files: $scope.attachmentsToContent(attachments)
-                    };
+                    if(UserInfo.U_Department == '秘書科' || UserInfo.U_Department == '勤務指揮中心'){
+                        $scope.selected = {
+                            id: UserInfo.U_ID,
+                            name: UserInfo.U_Name,
+                            topic: topic,
+                            content: angular.element(document.querySelector('.note-editable')).html(),
+                            files: $scope.attachmentsToContent(attachments),
+                            postTab: postTab
+                        };
+                    }else{
+                        $scope.selected = {
+                            id: UserInfo.U_ID,
+                            name: UserInfo.U_Name,
+                            topic: topic,
+                            content: angular.element(document.querySelector('.note-editable')).html(),
+                            files: $scope.attachmentsToContent(attachments)
+                        };
+                    }
                     $modalInstance.close($scope.selected)
                 }
             }, 

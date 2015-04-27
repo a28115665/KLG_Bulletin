@@ -125,7 +125,7 @@
 	</div>
 </div>
 
-<div data-ng-if="UserInfo.U_Role == 'User'">
+<div data-ng-if="UserInfo.U_Role == 'User' && UserInfo.U_Department != '秘書科' && UserInfo.U_Department != '勤務指揮中心'">
 	<ul id="myTab1" class="nav nav-tabs bordered">
 		<li class="active">
 			<a href="#s1" data-toggle="tab"><i class="fa fa-fw fa-lg fa-table"></i>&nbsp;公布欄列表 </a>
@@ -136,20 +136,30 @@
 			 id="s1"
 			 data-ng-controller="MasterPageCtrl"
 			 data-ng-init='loadBulletinData(UserInfo.U_Department)'
-			 data-ng-include="'views/SettingChild/公佈欄列表.html'"
-			 ng-if="UserInfo.U_Department != '秘書科' && UserInfo.U_Department != '勤務指揮中心'"></div>
+			 data-ng-include="'views/SettingChild/公佈欄列表.html'"></div>
+	</div>
+</div>
+
+<div data-ng-if="UserInfo.U_Role == 'User' && (UserInfo.U_Department == '秘書科' || UserInfo.U_Department == '勤務指揮中心')">
+	<ul id="myTab1" class="nav nav-tabs bordered">
+		<li class="active">
+			<a href="#s1" data-toggle="tab"><i class="fa fa-fw fa-lg fa-university"></i>&nbsp;局務會報資料 </a>
+		</li>
+		<li>
+			<a href="#s2" data-toggle="tab"><i class="fa fa-fw fa-lg fa-clipboard"></i>&nbsp;週報資料 </a>
+		</li>
+	</ul>
+	<div id="myTabContent1" class="tab-content padding-10 well">
 		<div class="tab-pane fade in active" 
 			 id="s1"
 			 data-ng-controller="MasterPageCtrl"
-			 data-ng-init='loadBulletinData(UserInfo.U_Department)'
-			 data-ng-include="'views/SettingChild/秘書科列表.html'"
-			 ng-if="UserInfo.U_Department == '秘書科'"></div>
-		<div class="tab-pane fade in active" 
-			 id="s1"
+			 data-ng-init='loadBulletinData(UserInfo.U_Department, 1)'
+			 data-ng-include="'views/SettingChild/秘書科列表.html'"></div>
+		<div class="tab-pane fade" 
+			 id="s2"
 			 data-ng-controller="MasterPageCtrl"
-			 data-ng-init='loadBulletinData(UserInfo.U_Department)'
-			 data-ng-include="'views/SettingChild/勤務指揮中心列表.html'"
-			 ng-if="UserInfo.U_Department == '勤務指揮中心'"></div>
+			 data-ng-init='loadBulletinData(UserInfo.U_Department, 2)'
+			 data-ng-include="'views/SettingChild/勤務指揮中心列表.html'"></div>
 	</div>
 </div>
 

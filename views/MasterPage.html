@@ -285,13 +285,13 @@
 					</div>
 					<div class="tab-pane fade" 
 						 id="s2"
-						 data-ng-init="loadBulletinData('秘書科')">
+						 data-ng-init="loadBulletinData('秘書科', 1)">
 						 <div class="table-responsive" style="min-height: 385px;">
 							<table id="resultTable" class="table table-striped table-bordered table-hover">
 								<thead>
 									<tr>
 										<th style="width:100px">發佈日期</th>
-										<th style="width:80px">單位</th>
+										<th style="width:120px">單位</th>
 										<th>標題</th>
 										<th style="width:100px">公布者</th>
 										<th style="width:30px"></th>
@@ -340,7 +340,7 @@
 					</div>
 					<div class="tab-pane fade" 
 						 id="s3"
-						 data-ng-init="loadBulletinData('勤務指揮中心')">
+						 data-ng-init="loadBulletinData('勤務指揮中心', 2)">
 						 <div class="table-responsive" style="min-height: 385px;">
 							<table id="resultTable" class="table table-striped table-bordered table-hover">
 								<thead>
@@ -410,12 +410,14 @@
 		</div>
     </div>
     <div class="modal-body">
+		<div class="form-group" ng-if="UserInfo.U_Department == '秘書科' || UserInfo.U_Department == '勤務指揮中心'">
+    		<select class="form-control" data-ng-model="selected.postTab" ng-options="b.id as b.name for b in postTab"/>
+		</div>
         <editor-form uploadpath="uploadURL" foldername="folderName"></editor-form>
 		<form action="" 
 			  method="post"
 			  target="id_iframe"
-              enctype="multipart/form-data"
-              ng-if="UserInfo.U_Department == '系統管理' || UserInfo.U_Department == '秘書科' || UserInfo.U_Department == '勤務指揮中心'">
+              enctype="multipart/form-data">
 	    	<div class="widget-footer smart-form">
 
 				<div class="btn-group pull-left">
@@ -458,7 +460,7 @@
     </div>
     <div class="modal-footer">
     	<strong class="text-danger">{{alertMessage}}</strong>
-        <button class="btn btn-primary" ng-click="ok(topic, attachments, UserInfo)">發布</button>
+        <button class="btn btn-primary" ng-click="ok(topic, attachments, UserInfo, selected.postTab)">發布</button>
         <button class="btn btn-warning" ng-click="cancel()">取消</button>
     </div>
 </script>
